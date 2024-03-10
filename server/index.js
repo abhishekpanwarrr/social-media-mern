@@ -8,6 +8,13 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/User.js";
+import postsRoutes from "./routes/posts.js";
+
+import { register } from "./controllers/auth.js";
+import { createPost } from "./controllers/posts.js";
+import { verifyToken } from "./middleware/auth.js";
 
 // CONFIG
 const __filename = fileURLToPath(import.meta.url);
@@ -42,13 +49,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// MONGOOSE SETUP
+// ROUTES WITH FILES
+app.post("/auth/registe", upload.single("picture"), register);
+app.post("/posts", verifyToken, upload.single("picture"), createPost);
+// ROUTES
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/posts", postsRoutes);
 
+// MONGOOSE SETUP
 const connectDB = async () => {
   try {
-    const connectionInstance = await mongoose.connect(
-      `${process.env.MONGO_URL}/"social-media"}`
-    );
+    const connectionInstance = await mongoose.connect(process.env.MONGO_URL, {
+      dbName: "social-media",
+    });
     console.log(
       `\n MongoDB connected !! DB HOST: ${connectionInstance.connection.host}`
     );
