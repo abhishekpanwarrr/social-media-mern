@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
-interface User {
+export interface User {
     friends?: User[];
     firstName: string
     lastName: string
@@ -79,4 +79,4 @@ export const authSlice = createSlice({
 })
 
 export const { setMode, setLogin, setLogout, setFriends, setPost, setPosts } = authSlice.actions;
-export default authSlice
+export default authSlice.reducer
