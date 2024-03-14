@@ -40,7 +40,7 @@ const FriendListWidget = ({ userId }: Props) => {
         Friend List
       </Typography>
       <Box display="flex" flexDirection="column" gap="1.5rem">
-        {friends.map((friend) => (
+        {friends.map((friend:any) => (
           <Friend
             key={friend._id}
             friendId={friend._id}

@@ -4,7 +4,13 @@ import {
   LocationOnOutlined,
   WorkOutlineOutlined,
 } from "@mui/icons-material";
-import { Box, Typography, Divider, useTheme } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Divider,
+  useTheme,
+  CircularProgress,
+} from "@mui/material";
 
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -29,6 +35,7 @@ export interface User {
 
 const UserWidget = ({ userId, picturePath }: Props) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
@@ -37,18 +44,37 @@ const UserWidget = ({ userId, picturePath }: Props) => {
   const main = palette.neutral.main;
 
   const getUser = async () => {
-    const response = await fetch(`http://localhost:8000/users/${userId}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await response.json();
-    setUser(data);
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:8000/users/${userId}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      setUser(data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     getUser();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  if (loading) {
+    return (
+      <Box
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        height={100}
+        width={"100%"}
+      >
+        <CircularProgress color="success" />
+      </Box>
+    );
+  }
   if (!user) {
     return null;
   }
